@@ -1,7 +1,9 @@
 import createMatrix
 
+
+kol = int(input('kol(3) = '))
 print('3:')
-for i in range(1000):
+for i in range(kol):
     with open('3x3.txt', 'r+', encoding='utf-8') as file:
         file.readlines()
         matrix = createMatrix.createMatrix(3)
@@ -12,6 +14,7 @@ for i in range(1000):
         file.write('\n')
     print(i,end=' ')
 
+kol = int(input('kol(4) = '))
 print('4:')
 for i in range(50):
     with open('4x4.txt', 'r+', encoding='utf-8') as file:

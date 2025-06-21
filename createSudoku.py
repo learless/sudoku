@@ -150,3 +150,40 @@ def countOfSolveSudoku(sudoku: list[list[str]]) -> int:
     solveSudoku(sudoku)
 
     return len(solves)
+
+
+def printSudoku(sudoku: list[list[str]], separator: str = '\t', zero: str = "0") -> None:
+    print()
+    result: list[list[str]] = []
+
+    for i, line in enumerate(sudoku):
+        result.append([])
+        for elem in range(len(line)):
+            if line[elem] != "0":
+                result[-1].append(line[elem])
+            else:
+                result[-1].append(zero)
+            if elem != 0 and (elem + 1) % int(len(line) ** .5) == 0 and elem + 1 != len(line):
+                result[-1].append('|')
+        if (i + 1) % int(len(sudoku) ** .5) == False:
+            result.append([])
+            for elem in range(len(result[-2])):
+                result[-1].append("--")
+
+    for line in result:
+        for elem in line:
+            print(elem, end=separator)
+        print()
+
+    print()
+
+def addElem(matrix: list[list[str]], row: int, column: int, newElem: str) -> None:
+    matrix[row][column] = newElem
+
+def countOfZero(matrix: list[list[str]]) -> int:
+    result: int = 0
+    for line in matrix:
+        for elem in line:
+            if elem == "0":
+                result += 1
+    return result

@@ -1,25 +1,22 @@
 import random
 from copy import deepcopy
-import time
-sss = []
+
 
 # difficult - количество удаляемых ячеек
+# 4x4 - 109
+# 3x3 - 54/55
+# 2x2 - 11
+# создание судоку
 def createSudoku(matrix: list[list[str]], difficult = 30) -> list:
-
-    global sss
 
     de = set()
 
     global solves
 
-    sss=matrix
-
     sudoku = deepcopy(matrix)
 
     deleteElement = 0
     while deleteElement < difficult:
-
-        #print("hello")
 
         i, j = random.randint(0, len(matrix) - 1), random.randint(0, len(matrix) - 1)
 
@@ -31,22 +28,21 @@ def createSudoku(matrix: list[list[str]], difficult = 30) -> list:
         if status[0]:
             sudoku = status[1]
             deleteElement += 1
-        elif deleteElement not in de:
-            time.sleep(0.1)
-            print(deleteElement)
-            de.add(deleteElement)
 
     return sudoku
-# 4x4 - 109
-# 3x3 - 54/55
-# 2x2 - 11
 
+
+
+# проверка нахождения элемента в столбце
 def columnCheck(newElement: str, matrix: list[list[str]], column: int) -> bool:
     for row in matrix:
         if row[column] == newElement:
             return False
     return True
 
+
+
+# проверка нахождения элемента в строке, столбце и квадрате
 def check(newElement: str, matrix: list[list[str]], row: int, column: int) -> bool:
 
     if ''.join(matrix[row]).find(newElement) == -1 \
@@ -66,6 +62,7 @@ def check(newElement: str, matrix: list[list[str]], row: int, column: int) -> bo
 
 
 
+# удаление элемента из матрицы
 def deleteElementsFromMatrix(sudoku: list[list[str]], row: int, column: int) -> list:
 
     _sudoku = deepcopy(sudoku)
@@ -79,20 +76,19 @@ def deleteElementsFromMatrix(sudoku: list[list[str]], row: int, column: int) -> 
             coords = [i, ''.join(line).find("0")]
             break
 
+    # 1 решение
     if countOfSolveSudoku(_sudoku) == 1:
         return [True, _sudoku]
+    # решений нет или судоку неоднозначно
     else:
-        #print(solves)
-        #(sudoku)
         return [False, _sudoku]
 
-    # if coords == []:
-    #     return sudoku
 
 
-
+# все решения судоку
 solves = []
 
+# поиск решений судоку
 def solveSudoku(sudoku: list[list[str]]):
 
     global solves
@@ -113,14 +109,16 @@ def solveSudoku(sudoku: list[list[str]]):
         #print(sudoku)
     #time.sleep(2)
 
+    # алфавит
     alphabet = [str(number) for number in range(1, 10)] \
         + [chr(letter) for letter in range(65, 91)] \
         + [chr(letter) for letter in range(97, 123)]
 
     alphabet = alphabet[:len(sudoku[0])]
 
+    # перебор всевозможных вариантов решений
     for symbol in alphabet:
-
+        
         if check(newElement=symbol, matrix=sudoku, row=coords[0], column=coords[1]):
 
             newLine = []
@@ -141,6 +139,7 @@ def solveSudoku(sudoku: list[list[str]]):
 
 
 
+# количество решений у судоку
 def countOfSolveSudoku(sudoku: list[list[str]]) -> int:
 
     global solves
@@ -152,6 +151,8 @@ def countOfSolveSudoku(sudoku: list[list[str]]) -> int:
     return len(solves)
 
 
+
+# вывод судоку в консоль
 def printSudoku(sudoku: list[list[str]], separator: str = '\t', zero: str = "0") -> None:
     print()
     result: list[list[str]] = []
@@ -177,9 +178,15 @@ def printSudoku(sudoku: list[list[str]], separator: str = '\t', zero: str = "0")
 
     print()
 
+
+
+# добавление элемента в судоку (пользовательский ввод)
 def addElem(matrix: list[list[str]], row: int, column: int, newElem: str) -> None:
     matrix[row][column] = newElem
 
+
+
+# счётчик количества незаполненных ячеек
 def countOfZero(matrix: list[list[str]]) -> int:
     result: int = 0
     for line in matrix:

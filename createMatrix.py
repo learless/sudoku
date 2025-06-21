@@ -1,10 +1,11 @@
 import random
-import time
+import sys
+#import time
 
 # посик в квадрате
-def searchInSquare(matrix: list, newElem: str) -> bool:
-    for line in matrix:
-        for elem in line:
+def searchInSquare(matrix: list[list[str]], newElem: str) -> bool:
+    for row in matrix:
+        for elem in row:
             if elem == newElem:
                 return True
     return False
@@ -20,7 +21,7 @@ def searhInHorizontalLine(line: list, newElem: str) -> bool:
 
 
 # горизонтальная линия для поиска
-def horizontalLineSelection(matrix: list, lineNumber: int) -> list:
+def horizontalLineSelection(matrix: list[list[list[str]]], lineNumber: int) -> list[str]:
     result = []
     for square in matrix:
         for elem in square[lineNumber]:
@@ -38,24 +39,24 @@ def searhInVerticalLine(line: list, newElem: str) -> bool:
 
 
 # вертикальная линия для поиска
-def verticalLineSelection(matrix: list, squareNumber: int, lineNumber: int) -> list:
+def verticalLineSelection(matrix: list[list[list[list[str]]]], squareNumber: int, lineNumber: int) -> list[str]:
 
     if len(matrix) == 1:
         return []
-    
+
     # print(matrix)
     # print(squareNumber, lineNumber)
 
     # exit()
 
     result = []
-    ''' 
-    ( 
-    
-    [ [[] [] []], [[] [] []], [[] [] []] ] 
-    [ [[] [] []], [[] [] []], [[] [] []] ] 
-    [ [[] [] []], [[] [] []], [[] [] []] ] 
-    
+    '''
+    (
+
+    [ [[] [] []], [[] [] []], [[] [] []] ]
+    [ [[] [] []], [[] [] []], [[] [] []] ]
+    [ [[] [] []], [[] [] []], [[] [] []] ]
+
     )
 
     '''
@@ -66,7 +67,7 @@ def verticalLineSelection(matrix: list, squareNumber: int, lineNumber: int) -> l
 
 
 # доработать
-def printMatrix(matrix: list) -> None:
+def printMatrix(matrix: list[list[list[list[str]]]]) -> None:
     print()
     result = []
     _line = []
@@ -77,14 +78,14 @@ def printMatrix(matrix: list) -> None:
                 _line = horizontalLineSelection(line, miniLine)
                 for elem in range(len(_line)):
                     result[-1].append(_line[elem])
-                    if elem != 0 and (elem + 1) % int(len(_line) ** .5) == 0:
+                    if elem != 0 and (elem + 1) % int(len(_line) ** .5) == 0 and elem + 1 != len(_line):
                         result[-1].append('|')
         else:
             return
         result.append([])
         for i in range(len(result[-2])):
             result[-1].append('--')
-    
+
     for line in result:
         for elem in line:
             print(elem, end='\t')
@@ -93,13 +94,13 @@ def printMatrix(matrix: list) -> None:
     print()
 
 # создание матрицы
-def createMatrix(rank=4) -> list:
+def createMatrix(rank=3) -> list[list[str]]:
 
-    # 1..9, A..Z, a..z  
+    # 1..9, A..Z, a..z
     alphabet = [str(number) for number in range(1, 10)] \
         + [chr(letter) for letter in range(65, 91)] \
         + [chr(letter) for letter in range(97, 123)]
-    
+
     alphabet = alphabet[:rank**2]
     #print(alphabet)
     #print()
@@ -127,9 +128,9 @@ def createMatrix(rank=4) -> list:
             if (column + 1 != rank) or (square + 1 != rank):
                 matrix[column].append([])
                 for i in range(rank):
-                    
+
                     matrix[column][square].append([])
-                    
+
                     for j in range(rank):
 
                         symbol = random.randint(0, len(alphabet) - 1)
@@ -138,7 +139,7 @@ def createMatrix(rank=4) -> list:
                         while searchInSquare(matrix[column][square], alphabet[symbol]) \
                             or searhInHorizontalLine(horizontalLineSelection(matrix[column], i), alphabet[symbol]) \
                             or searhInVerticalLine(verticalLineSelection(matrix, square, j), alphabet[symbol]):
-                                
+
                             haveIAnyElementToAdd = []
 
                             for elem in alphabet:
@@ -154,10 +155,10 @@ def createMatrix(rank=4) -> list:
                                 break
 
                             symbol = random.randint(0, len(alphabet) - 1)
-                        
+
                         if not(checkForRegneration):
                             matrix[column][square][i].append(alphabet[symbol])
-                        
+
                         else:
                             break
             else:
@@ -190,20 +191,22 @@ def createMatrix(rank=4) -> list:
 
             if checkForRegneration:
                 checkForRegneration = False
-                
-                print(column, square)
-                
+
+                #print(column, square)
+
                 matrix.pop()
 
                 square = 0
 
                 matrix.append([])
-                
-                printMatrix(matrix)
-                
+
+                #printMatrix(matrix)
+
                 #time.sleep(1)
             else:
-                print('g', square)
+
+                #print('g', square)
+
                 square += 1
 
 
@@ -219,5 +222,14 @@ def createMatrix(rank=4) -> list:
 
     return resultMatrix
 
+
+def main() -> None:
+    rank = 3
+    if len(sys.argv) < 2:
+        rank = int(input('rank = '))
+    else:
+        rank = int(sys.argv[-1])
+    createMatrix(rank=rank)
+
 if __name__ == '__main__':
-    createMatrix(int(input('rank = ')))
+    main()

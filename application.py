@@ -44,11 +44,21 @@ class SudokuFieldScreen(QWidget):
         min_side = min(screen_size.width(), screen_size.height())
         cell_size = int(min_side * 0.7 // grid_size)
 
-        # Счётчик ошибок
+        # Счётчик ошибок и кнопка подсказки
         self.errors = 0
         self.error_label = QLabel("Ошибки: 0")
         self.error_label.setFont(QFont("Arial", int(cell_size * 0.25)))
-        layout.addWidget(self.error_label, alignment=Qt.AlignRight)
+
+        hint_btn = QPushButton("Подсказка")
+        hint_btn.setFont(QFont("Arial", int(cell_size * 0.18)))
+        hint_btn.setFixedHeight(int(cell_size * 0.7))
+        hint_btn.setCursor(Qt.PointingHandCursor)
+        hint_btn.clicked.connect(self.show_hint)
+
+        top_panel = QHBoxLayout()
+        top_panel.addWidget(self.error_label, alignment=Qt.AlignRight)
+        top_panel.addWidget(hint_btn, alignment=Qt.AlignRight)
+        layout.addLayout(top_panel)
 
         # Контейнер для поля с границей
         field_container = QWidget()
@@ -130,6 +140,16 @@ class SudokuFieldScreen(QWidget):
         result_screen = ResultScreen(self.errors, minutes, seconds, self.stacked_widget)
         self.stacked_widget.addWidget(result_screen)
         self.stacked_widget.setCurrentWidget(result_screen)
+
+    def show_hint(self):
+        # Находит первую пустую ячейку и подставляет правильное значение
+        for row, row_cells in enumerate(self.cells):
+            for col, cell in enumerate(row_cells):
+                if not cell.isReadOnly() and cell.text() == "":
+                    correct_value = self.solved_sudoku[row][col]
+                    cell.setText(correct_value)
+                    cell.setStyleSheet("background-color: #fff9c4;")  # жёлтый для подсказки
+                    return
 
 class ResultScreen(QWidget):
     def __init__(self, errors, minutes, seconds, stacked_widget):

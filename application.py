@@ -220,7 +220,6 @@ class StartScreen(QWidget):
 
         start_btn = QPushButton("Начать игру")
         start_btn.setStyleSheet("background-color: green; color: white;")
-        start_btn.setToolTip("Нажмите, чтобы начать игру")
         start_btn.setCursor(Qt.PointingHandCursor)
         start_btn.setFixedSize(btn_width, btn_height)
         start_btn.setFont(QFont("Arial", font_size))
@@ -229,7 +228,6 @@ class StartScreen(QWidget):
 
         best_btn = QPushButton("Лучшие результаты")
         best_btn.setStyleSheet("background-color: orange; color: white;")
-        best_btn.setToolTip("Показать лучшие результаты")
         best_btn.setCursor(Qt.PointingHandCursor)
         best_btn.setFixedSize(btn_width, btn_height)
         best_btn.setFont(QFont("Arial", font_size))
@@ -238,7 +236,6 @@ class StartScreen(QWidget):
 
         exit_btn = QPushButton("Выйти")
         exit_btn.setStyleSheet("background-color: red; color: white;")
-        exit_btn.setToolTip("Закрыть приложение")
         exit_btn.setCursor(Qt.PointingHandCursor)
         exit_btn.setFixedSize(btn_width, btn_height)
         exit_btn.setFont(QFont("Arial", font_size))
@@ -288,35 +285,35 @@ class ResultScreen(QWidget):
 
         result_label = QLabel(f"Поздравляем!\nВы решили судоку.")
         result_label.setAlignment(Qt.AlignCenter)
-        result_label.setFont(QFont("Arial", 32))
+        result_label.setFont(QFont("Arial", 46))
         layout.addWidget(result_label)
 
         # Уровень и сложность
         level_label = QLabel(f"Размер: {size_text}, Сложность: {difficult.capitalize()}")
         level_label.setAlignment(Qt.AlignCenter)
-        level_label.setFont(QFont("Arial", 22))
+        level_label.setFont(QFont("Arial", 40))
         layout.addWidget(level_label)
 
         time_label = QLabel(f"Время: {minutes:02}:{seconds:02}")
         time_label.setAlignment(Qt.AlignCenter)
-        time_label.setFont(QFont("Arial", 24))
+        time_label.setFont(QFont("Arial", 42))
         layout.addWidget(time_label)
 
         error_label = QLabel(f"Ошибки: {errors}")
         error_label.setAlignment(Qt.AlignCenter)
-        error_label.setFont(QFont("Arial", 24))
+        error_label.setFont(QFont("Arial", 40))
         layout.addWidget(error_label)
 
         hint_label = QLabel(f"Использовано подсказок: {hints_used}")
         hint_label.setAlignment(Qt.AlignCenter)
-        hint_label.setFont(QFont("Arial", 22))
+        hint_label.setFont(QFont("Arial", 40))
         layout.addWidget(hint_label)
 
         # Сохраняем результат
         save_best_result(size_text, difficult, minutes, seconds, errors, hints_used)
 
         again_btn = QPushButton("Сыграть ещё раз")
-        again_btn.setFont(QFont("Arial", 20))
+        again_btn.setFont(QFont("Arial", 24))
         again_btn.setStyleSheet("background-color: green; color: white;")
         again_btn.setFixedHeight(80)
         again_btn.clicked.connect(self.back_to_start)

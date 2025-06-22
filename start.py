@@ -1,9 +1,9 @@
 import createMatrix
 import createSudoku
 
-m = createMatrix.createMatrix(int(input()))
+m = createMatrix.createMatrix(int(input('Введите размер поля(X на X):')))
 
-sudoku = createSudoku.createSudoku(m, int(input()))
+sudoku = createSudoku.createSudoku(m, int(input('Введите количество элементов, которые вы хотите удалить:')))
 
 inc: int = 0
 

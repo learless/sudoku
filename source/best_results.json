@@ -12,5 +12,19 @@
     "seconds": 11,
     "errors": 0,
     "hints_used": 49
+  },
+  "3x3_easy": {
+    "time": 51,
+    "minutes": 0,
+    "seconds": 51,
+    "errors": 0,
+    "hints_used": 0
+  },
+  "2x2_hard": {
+    "time": 20,
+    "minutes": 0,
+    "seconds": 20,
+    "errors": 0,
+    "hints_used": 3
   }
 }

@@ -256,6 +256,8 @@ class StartScreen(QWidget):
             msg = "Пока нет сохранённых результатов."
         else:
             msg = "Лучшие результаты:\n"
+            msg_no_hints = "\nРезультаты без использования подсказок:\n"
+            found_no_hints = False
             for key, val in results.items():
                 size, diff = key.split("_")
                 msg += (
@@ -263,8 +265,20 @@ class StartScreen(QWidget):
                     f"Время: {val['minutes']:02}:{val['seconds']:02}, "
                     f"Ошибки: {val['errors']}, Подсказки: {val['hints_used']}\n"
                 )
+                if val.get("hints_used", 0) == 0:
+                    found_no_hints = True
+                    msg_no_hints += (
+                        f"\nРазмер: {size}, Сложность: {diff.capitalize()}\n"
+                        f"Время: {val['minutes']:02}:{val['seconds']:02}, "
+                        f"Ошибки: {val['errors']}\n"
+                    )
+            if not found_no_hints:
+                msg_no_hints += "\nНет результатов без подсказок."
+            msg += msg_no_hints
         from PyQt5.QtWidgets import QMessageBox
-        QMessageBox.information(self, "Лучшие результаты", msg)
+        QMessageBox.information(self,
+                                 "Лучшие результаты",
+                                 msg)
 
 class ResultScreen(QWidget):
     def __init__(self, errors, minutes, seconds, stacked_widget, size_text, difficult, hints_used):

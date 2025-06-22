@@ -14,6 +14,9 @@ class SudokuFieldScreen(QWidget):
     def __init__(self, size_text, difficult="easy", stacked_widget=None):
         super().__init__()
         self.stacked_widget = stacked_widget
+        self.difficult = difficult
+        self.size_text = size_text
+        self.hints_used = 0  # Счётчик подсказок
         layout = QVBoxLayout()
 
         # Таймер
@@ -137,7 +140,15 @@ class SudokuFieldScreen(QWidget):
         elapsed = int(time.time() - self.start_time)
         minutes = elapsed // 60
         seconds = elapsed % 60
-        result_screen = ResultScreen(self.errors, minutes, seconds, self.stacked_widget)
+        result_screen = ResultScreen(
+            self.errors,
+            minutes,
+            seconds,
+            self.stacked_widget,
+            self.size_text,
+            self.difficult,
+            self.hints_used
+        )
         self.stacked_widget.addWidget(result_screen)
         self.stacked_widget.setCurrentWidget(result_screen)
 
@@ -149,10 +160,11 @@ class SudokuFieldScreen(QWidget):
                     correct_value = self.solved_sudoku[row][col]
                     cell.setText(correct_value)
                     cell.setStyleSheet("background-color: #fff9c4;")  # жёлтый для подсказки
+                    self.hints_used += 1
                     return
 
 class ResultScreen(QWidget):
-    def __init__(self, errors, minutes, seconds, stacked_widget):
+    def __init__(self, errors, minutes, seconds, stacked_widget, size_text, difficult, hints_used):
         super().__init__()
         self.stacked_widget = stacked_widget
         layout = QVBoxLayout()
@@ -161,6 +173,12 @@ class ResultScreen(QWidget):
         result_label.setAlignment(Qt.AlignCenter)
         result_label.setFont(QFont("Arial", 32))
         layout.addWidget(result_label)
+
+        # Уровень и сложность
+        level_label = QLabel(f"Размер: {size_text}, Сложность: {difficult.capitalize()}")
+        level_label.setAlignment(Qt.AlignCenter)
+        level_label.setFont(QFont("Arial", 22))
+        layout.addWidget(level_label)
 
         time_label = QLabel(f"Время: {minutes:02}:{seconds:02}")
         time_label.setAlignment(Qt.AlignCenter)
@@ -171,6 +189,11 @@ class ResultScreen(QWidget):
         error_label.setAlignment(Qt.AlignCenter)
         error_label.setFont(QFont("Arial", 24))
         layout.addWidget(error_label)
+
+        hint_label = QLabel(f"Использовано подсказок: {hints_used}")
+        hint_label.setAlignment(Qt.AlignCenter)
+        hint_label.setFont(QFont("Arial", 22))
+        layout.addWidget(hint_label)
 
         again_btn = QPushButton("Сыграть ещё раз")
         again_btn.setFont(QFont("Arial", 20))

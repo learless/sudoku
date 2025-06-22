@@ -39,13 +39,21 @@ def save_best_result(size_text, difficult, minutes, seconds, errors, hints_used)
         with open(BEST_RESULTS_FILE, "w", encoding="utf-8") as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
 
+class SudokuCell(QLineEdit):
+    def keyPressEvent(self, event):
+        if event.key() in (Qt.Key_Up, Qt.Key_Down, Qt.Key_Left, Qt.Key_Right):
+            self.parentWidget().parentWidget().keyPressEvent(event)
+        else:
+            super().keyPressEvent(event)
+
 class SudokuFieldScreen(QWidget):
     def __init__(self, size_text, difficult="easy", stacked_widget=None):
         super().__init__()
+        self.setFocusPolicy(Qt.StrongFocus)
         self.stacked_widget = stacked_widget
         self.difficult = difficult
         self.size_text = size_text
-        self.hints_used = 0  # Счётчик подсказок
+        self.hints_used = 0
         layout = QVBoxLayout()
 
         # Таймер
@@ -115,7 +123,7 @@ class SudokuFieldScreen(QWidget):
         for row in range(grid_size):
             row_cells = []
             for col in range(grid_size):
-                cell = QLineEdit()
+                cell = SudokuCell()
                 cell.setFixedSize(cell_size, cell_size)
                 cell.setAlignment(Qt.AlignCenter)
                 cell.setFont(QFont("Arial", int(cell_size * 0.4)))
@@ -147,11 +155,78 @@ class SudokuFieldScreen(QWidget):
                         return check
                     cell.textChanged.connect(make_check(cell))
                 block_layouts[br][bc].addWidget(cell, row % block_size, col % block_size)
+                # Добавим обработчик фокуса для подсветки
+                def make_focus_handler(cell, row=row, col=col):
+                    def on_focus_in(event):
+                        self.highlight_cell(row, col)
+                        QLineEdit.focusInEvent(cell, event)
+                    def on_focus_out(event):
+                        self.unhighlight_cell(row, col)
+                        QLineEdit.focusOutEvent(cell, event)
+                    cell.focusInEvent = on_focus_in
+                    cell.focusOutEvent = on_focus_out
+                make_focus_handler(cell)
                 row_cells.append(cell)
             self.cells.append(row_cells)
 
         layout.addWidget(field_container)
         self.setLayout(layout)
+
+        # После создания self.cells:
+        self.selected_row = 0
+        self.selected_col = 0
+        if self.cells and self.cells[0]:
+            self.cells[0][0].setFocus()
+            self.highlight_cell(0, 0)
+
+    def highlight_cell(self, row, col):
+        # Снимем подсветку со всех
+        for r, row_cells in enumerate(self.cells):
+            for c, cell in enumerate(row_cells):
+                # Для редактируемых ячеек убираем синюю рамку
+                if not cell.isReadOnly():
+                    cell.setStyleSheet(cell.styleSheet().replace("border: 2px solid #2196f3;", ""))
+                # Для нерабочих (readOnly) ячеек убираем оранжевую рамку
+                else:
+                    cell.setStyleSheet(cell.styleSheet().replace("border: 2px solid orange;", ""))
+        # Подсветим текущую
+        cell = self.cells[row][col]
+        if cell.isReadOnly():
+            style = cell.styleSheet()
+            if "border: 2px solid orange;" not in style:
+                cell.setStyleSheet(style + "border: 2px solid orange;")
+        else:
+            style = cell.styleSheet()
+            if "border: 2px solid #2196f3;" not in style:
+                cell.setStyleSheet(style + "border: 2px solid #2196f3;")
+
+    def unhighlight_cell(self, row, col):
+        cell = self.cells[row][col]
+        if not cell.isReadOnly():
+            cell.setStyleSheet(cell.styleSheet().replace("border: 2px solid #2196f3;", ""))
+
+    def keyPressEvent(self, event):
+        if not hasattr(self, "cells") or not self.cells:
+            return
+
+        row, col = self.selected_row, self.selected_col
+        grid_size = len(self.cells)
+
+        if event.key() == Qt.Key_Up:
+            row = (row - 1) % grid_size
+        elif event.key() == Qt.Key_Down:
+            row = (row + 1) % grid_size
+        elif event.key() == Qt.Key_Left:
+            col = (col - 1) % grid_size
+        elif event.key() == Qt.Key_Right:
+            col = (col + 1) % grid_size
+        else:
+            super().keyPressEvent(event)
+            return
+
+        self.selected_row, self.selected_col = row, col
+        self.cells[row][col].setFocus()
+        self.highlight_cell(row, col)
 
     def check_win(self):
         # Проверяем, что все значения совпадают с решением

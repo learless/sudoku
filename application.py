@@ -242,7 +242,7 @@ class StartScreen(QWidget):
         exit_btn.setCursor(Qt.PointingHandCursor)
         exit_btn.setFixedSize(btn_width, btn_height)
         exit_btn.setFont(QFont("Arial", font_size))
-        exit_btn.clicked.connect(self.close)
+        exit_btn.clicked.connect(QApplication.quit)
         layout.addWidget(exit_btn)
 
         self.setLayout(layout)

@@ -1,0 +1,16 @@
+{
+  "2x2_easy": {
+    "time": 1,
+    "minutes": 0,
+    "seconds": 1,
+    "errors": 0,
+    "hints_used": 2
+  },
+  "3x3_hard": {
+    "time": 11,
+    "minutes": 0,
+    "seconds": 11,
+    "errors": 0,
+    "hints_used": 49
+  }
+}

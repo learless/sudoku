@@ -210,9 +210,8 @@ def createMatrix(rank=3) -> list[list[str]]:
                 square += 1
 
 
-    printMatrix(matrix)
-
-    #print(matrix)
+    if __name__ == '__main__':
+        printMatrix(matrix)
 
     resultMatrix = []
 
